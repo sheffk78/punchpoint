@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A2540">
+<title>PunchPoint — Construction Time Tracking</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0A2540;
+  --navy-light:#143658;
+  --orange:#FF6B35;
+  --orange-dark:#E55A2B;
+  --white:#FFFFFF;
+  --slate:#64748B;
+  --slate-light:#94A3B8;
+  --bg:#F1F5F9;
+  --card:#FFFFFF;
+  --border:#E2E8F0;
+  --green:#16A34A;
+  --green-bg:#DCFCE7;
+  --red:#DC2626;
+  --red-bg:#FEE2E2;
+  --gray-bg:#F1F5F9;
+  --shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 12px rgba(0,0,0,.12);
+  --radius:6px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--navy);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column;min-height:100vh}
+
+/* LOGIN */
+.login-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--navy);padding:24px}
+.login-card{background:var(--white);border-radius:8px;padding:32px 24px;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;justify-content:center}
+.login-logo .dot{width:36px;height:36px;background:var(--orange);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px}
+.login-logo .name{font-size:22px;font-weight:700;color:var(--navy)}
+.login-sub{text-align:center;color:var(--slate);font-size:13px;margin-bottom:20px}
+
+/* FORMS */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius);
+  font-size:15px;font-family:var(--font);color:var(--navy);background:var(--white);transition:border-color .15s
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--orange)}
+.form-group textarea{resize:vertical;min-height:90px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:12px 20px;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;transition:opacity .15s,background .15s;text-decoration:none}
+.btn:active{opacity:.85}
+.btn-primary{background:var(--orange);color:#fff;width:100%}
+.btn-primary:hover{background:var(--orange-dark)}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-light)}
+.btn-outline{background:var(--white);border:1.5px solid var(--border);color:var(--navy)}
+.btn-outline:hover{border-color:var(--orange)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-sm{min-height:36px;padding:6px 14px;font-size:13px}
+.btn-block{width:100%}
+
+/* LINKS */
+.form-toggle{text-align:center;font-size:14px;color:var(--slate);margin-top:16px}
+.form-toggle a{color:var(--orange);font-weight:600;text-decoration:none;cursor:pointer}
+
+/* APP LAYOUT */
+.app{display:none;flex:1;flex-direction:column}
+.app.active{display:flex}
+.content{flex:1;padding:16px;margin-bottom:64px;max-width:1100px;width:100%;margin-left:auto;margin-right:auto}
+
+/* HEADER */
+.header{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.header .logo{display:flex;align-items:center;gap:8px}
+.header .logo .dot{width:28px;height:28px;background:var(--orange);border-radius:5px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px}
+.header .logo .name{font-size:17px;font-weight:700}
+.header .user-info{font-size:13px;color:var(--slate-light);display:flex;align-items:center;gap:10px}
+
+/* NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--navy);display:flex;justify-content:space-around;align-items:center;z-index:100;box-shadow:0 -2px 8px rgba(0,0,0,.15)}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 6px;color:var(--slate-light);cursor:pointer;border:none;background:none;font-family:var(--font);font-size:10px;flex:1;min-height:56px;transition:color .15s}
+.nav-item.active{color:var(--orange)}
+.nav-item .icon{font-size:20px;line-height:1}
+
+/* DESKTOP SIDEBAR */
+@media(min-width:820px){
+  .app{flex-direction:row}
+  .bottom-nav{position:fixed;left:0;top:0;bottom:0;flex-direction:column;justify-content:flex-start;width:200px;align-items:stretch;padding:16px 0;gap:4px}
+  .nav-item{flex-direction:row;justify-content:flex-start;gap:10px;font-size:14px;min-height:48px;padding:10px 18px}
+  .nav-item .icon{font-size:18px}
+  .header{display:none}
+  .content{margin-left:200px;padding:24px;margin-bottom:0}
+  .desktop-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+  .desktop-header h1{font-size:24px;font-weight:700;color:var(--navy)}
+}
+.desktop-header{display:none}
+
+/* PAGE TITLE */
+.page-title{font-size:20px;font-weight:700;margin-bottom:16px;color:var(--navy)}
+.page-subtitle{font-size:13px;color:var(--slate);margin-bottom:16px}
+
+/* CARDS */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:600;color:var(--slate);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.stat-card{background:var(--navy);border-radius:var(--radius);padding:18px 16px;color:#fff;box-shadow:var(--shadow)}
+.stat-card .stat-label{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--slate-light);margin-bottom:6px}
+.stat-card .stat-value{font-size:28px;font-weight:700;color:var(--orange);line-height:1.1}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:600px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px}
+table th{text-align:left;padding:10px 8px;color:var(--slate);font-size:12px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border)}
+table td{padding:10px 8px;border-bottom:1px solid var(--border);color:var(--navy)}
+table tr:last-child td{border-bottom:none}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600}
+.badge-active{background:var(--green-bg);color:var(--green)}
+.badge-completed{background:var(--gray-bg);color:var(--slate)}
+.badge-over{background:var(--red-bg);color:var(--red)}
+.badge-ok{background:var(--green-bg);color:var(--green)}
+.badge-warn{background:#FEF3C7;color:#D97706}
+
+/* LISTS */
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.list-item-info{flex:1}
+.list-item-title{font-weight:600;font-size:15px}
+.list-item-sub{font-size:13px;color:var(--slate)}
+
+/* PHOTO GRID */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.photo-item{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;aspect-ratio:1;background:var(--navy)}
+.photo-item img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* SECTION VISIBILITY */
+.view{display:none}
+.view.active{display:block}
+
+/* MODAL */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,37,64,.6);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:8px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--border)}
+.modal-header h3{font-size:17px;font-weight:700}
+.modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--slate);padding:0 4px}
+.modal-body{padding:16px}
+
+/* GPS indicator */
+.gps-status{font-size:12px;color:var(--slate);margin-top:4px}
+.gps-status.ok{color:var(--green)}
+.gps-status.err{color:var(--red)}
+
+/* CLOCK IN STATUS */
+.clock-status{background:var(--navy);color:#fff;border-radius:var(--radius);padding:16px;margin-bottom:16px;text-align:center}
+.clock-status.clocked-in{background:var(--green)}
+.clock-status .status-icon{font-size:32px;margin-bottom:4px}
+.clock-status .status-text{font-size:18px;font-weight:600}
+.clock-status .status-sub{font-size:13px;color:var(--slate-light)}
+
+/* ERRORS */
+.alert{padding:12px 14px;border-radius:var(--radius);font-size:14px;margin-bottom:14px}
+.alert-error{background:var(--red-bg);color:var(--red)}
+.alert-success{background:var(--green-bg);color:var(--green)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 16px;color:var(--slate)}
+.empty .empty-icon{font-size:40px;margin-bottom:8px}
+
+/* MISC */
+.spacer{height:8px}
+.section-divider{height:1px;background:var(--border);margin:16px 0}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.muted{color:var(--slate)}
+.text-right{text-align:right}
+.hide{display:none!important}
+.mono{font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="dot">P</div>
+      <div class="name">PunchPoint</div>
+    </div>
+    <div class="login-sub" id="loginSub">Construction Time Tracking &amp; Job Costing</div>
+
+    <div id="alertArea"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="you@company.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary" id="loginBtn">Sign In</button>
+      <div class="form-toggle">No account? <a id="showRegister">Create one</a></div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display:none">
+      <div class="form-group">
+        <label>Company Name</label>
+        <input type="text" id="regCompany" placeholder="Acme Construction Co.">
+      </div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="regName" placeholder="John Smith" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="you@company.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" placeholder="Min 8 characters" autocomplete="new-password">
+      </div>
+      <button class="btn btn-primary" id="registerBtn">Create Account</button>
+      <div class="form-toggle">Already have an account? <a id="showLogin">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app">
+  <!-- Mobile header -->
+  <div class="header">
+    <div class="logo">
+      <div class="dot">P</div>
+      <div class="name">PunchPoint</div>
+    </div>
+    <div class="user-info">
+      <span id="userName"></span>
+      <button class="btn btn-sm btn-outline" id="logoutBtnMobile" style="border-color:var(--slate);color:#fff;padding:4px 12px">Logout</button>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+
+    <div class="desktop-header">
+      <h1 id="desktopTitle">Dashboard</h1>
+      <button class="btn btn-sm btn-outline" id="logoutBtnDesktop">Logout</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="page-title">Dashboard</div>
+      <div class="stat-grid" id="dashStats">
+        <div class="stat-card"><div class="stat-label">Active Crew</div><div class="stat-value" id="statActiveCrew">—</div></div>
+        <div class="stat-card"><div class="stat-label">Hours Today</div><div class="stat-value" id="statHours">—</div></div>
+        <div class="stat-card"><div class="stat-label">Active Projects</div><div class="stat-value" id="statProjects">—</div></div>
+        <div class="stat-card"><div class="stat-label">Labor Cost Today</div><div class="stat-value" id="statLabor">—</div></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="card">
+        <div class="card-title">Quick Actions</div>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-sm" onclick="showView('time')">Clock In/Out</button>
+          <button class="btn btn-navy btn-sm" onclick="showView('reports')">New Report</button>
+          <button class="btn btn-outline btn-sm" onclick="showView('photos')">Upload Photo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIME TRACKING -->
+    <div class="view" id="view-time">
+      <div class="page-title">Time Tracking</div>
+      <div class="page-subtitle">Clock in and out with GPS verification</div>
+
+      <div class="clock-status" id="clockStatus">
+        <div class="status-icon">⏰</div>
+        <div class="status-text" id="clockStatusText">Not Clocked In</div>
+        <div class="status-sub" id="clockStatusSub">Select an employee to check status</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Clock In</div>
+        <div class="form-group">
+          <label>Employee</label>
+          <select id="timeEmployee"></select>
+        </div>
+        <div class="form-group">
+          <label>Project</label>
+          <select id="timeProject"></select>
+        </div>
+        <div class="form-group">
+          <label>Cost Code</label>
+          <select id="timeCostCode"></select>
+        </div>
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <textarea id="timeNotes" placeholder="E.g., Pouring foundation, North wing"></textarea>
+        </div>
+        <div id="gpsStatusIn" class="gps-status"></div>
+        <div class="spacer"></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="clockInBtn">Clock In</button>
+          <button class="btn btn-navy" id="clockOutBtn">Clock Out</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Recent Time Entries</div>
+        <div id="recentEntries"><div class="empty"><div class="empty-icon">📋</div>Loading entries...</div></div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="view" id="view-projects">
+      <div class="page-title">Projects</div>
+      <div class="page-subtitle">Manage construction projects and budgets</div>
+      <div class="card">
+        <div class="card-title">Add Project</div>
+        <div class="form-group">
+          <label>Project Name</label>
+          <input type="text" id="projName" placeholder="Downtown Office Tower">
+        </div>
+        <div class="form-group">
+          <label>Client Name</label>
+          <input type="text" id="projClient" placeholder="Summit Development LLC">
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <input type="text" id="projAddress" placeholder="100 Main St, Austin, TX 78701">
+        </div>
+        <div class="btn-row">
+          <div class="form-group" style="flex:1">
+            <label>Budget Hours</label>
+            <input type="number" id="projBudgetHours" placeholder="1200">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Budget Labor Cost ($)</label>
+            <input type="number" id="projBudgetCost" placeholder="48000">
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="form-group" style="flex:1">
+            <label>Latitude</label>
+            <input type="text" id="projLat" placeholder="30.2672">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Longitude</label>
+            <input type="text" id="projLng" placeholder="-97.7431">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Geofence (m)</label>
+            <input type="number" id="projGeofence" placeholder="150">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="addProjectBtn">Add Project</button>
+      </div>
+      <div id="projectList"><div class="empty"><div class="empty-icon">🏗️</div>Loading projects...</div></div>
+    </div>
+
+    <!-- EMPLOYEES -->
+    <div class="view" id="view-employees">
+      <div class="page-title">Crew</div>
+      <div class="page-subtitle">Manage employees and hourly rates</div>
+
+      <div class="card">
+        <div class="card-title">Add Employee</div>
+        <div class="btn-row">
+          <div class="form-group" style="flex:1;min-width:90px">
+            <label>Emp ID</label>
+            <input type="text" id="empId" placeholder="EMP-001">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>First Name</label>
+            <input type="text" id="empFirst" placeholder="John">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Last Name</label>
+            <input type="text" id="empLast" placeholder="Smith">
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="form-group" style="flex:1">
+            <label>Phone</label>
+            <input type="text" id="empPhone" placeholder="512-555-0100">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Hourly Rate ($)</label>
+            <input type="number" id="empRate" placeholder="35" step="0.01">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Overtime Rate ($)</label>
+            <input type="number" id="empOtRate" placeholder="52.50" step="0.01">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="addEmployeeBtn">Add Employee</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Bulk Import</div>
+        <div class="form-group">
+          <label>Paste CSV (employee_id, first_name, last_name, phone, hourly_rate, overtime_rate)</label>
+          <textarea id="bulkText" placeholder="EMP-001,John,Smith,512-555-0100,35,52.50&#10;EMP-002,Jane,Doe,512-555-0101,38,57.00"></textarea>
+        </div>
+        <button class="btn btn-navy" id="bulkImportBtn">Import Employees</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Crew Roster</div>
+        <div id="employeeList"><div class="empty"><div class="empty-icon">👷</div>Loading crew...</div></div>
+      </div>
+    </div>
+
+    <!-- JOB COSTING -->
+    <div class="view" id="view-costs">
+      <div class="page-title">Job Costing</div>
+      <div class="page-subtitle">Budget vs actuals across all projects</div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table id="costTable">
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th class="text-right">Budget Hrs</th>
+                <th class="text-right">Actual Hrs</th>
+                <th class="text-right">Variance</th>
+                <th class="text-right">Budget $</th>
+                <th class="text-right">Actual $</th>
+                <th class="text-right">Variance</th>
+                <th class="text-right">% Used</th>
+              </tr>
+            </thead>
+            <tbody id="costBody"><tr><td colspan="8" class="empty">Loading job cost data...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY REPORTS -->
+    <div class="view" id="view-reports">
+      <div class="page-title">Daily Reports</div>
+      <div class="page-subtitle">OSHA-compliant daily work logs</div>
+
+      <div class="card">
+        <div class="card-title">New Daily Report</div>
+        <div class="form-group">
+          <label>Project</label>
+          <select id="reportProject"></select>
+        </div>
+        <div class="btn-row">
+          <div class="form-group" style="flex:1">
+            <label>Date</label>
+            <input type="date" id="reportDate">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Weather</label>
+            <input type="text" id="reportWeather" placeholder="Sunny, 78°F">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Crew Summary</label>
+          <input type="text" id="reportCrew" placeholder="6 laborers, 2 operators, 1 foreman">
+        </div>
+        <div class="btn-row">
+          <div class="form-group" style="flex:1">
+            <label>Hours Total</label>
+            <input type="number" id="reportHours" placeholder="72" step="0.5">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Injuries Reported</label>
+            <select id="reportInjuries">
+              <option value="none">None</option>
+              <option value="minor">Minor</option>
+              <option value="major">Major</option>
+              <option value="near_miss">Near Miss</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="reportNotes" placeholder="Concrete pour completed on slab 3. Framing crew started on level 2. Safety meeting held at 7:00 AM."></textarea>
+        </div>
+        <button class="btn btn-primary" id="addReportBtn">Submit Report</button>
+      </div>
+
+      <div id="reportList"><div class="empty"><div class="empty-icon">📄</div>Loading reports...</div></div>
+    </div>
+
+    <!-- PHOTOS -->
+    <div class="view" id="view-photos">
+      <div class="page-title">Photos</div>
+      <div class="page-subtitle">Job site photos with GPS capture</div>
+
+      <div class="card">
+        <div class="card-title">Upload Photo</div>
+        <div class="form-group">
+          <label>Project</label>
+          <select id="photoProject"></select>
+        </div>
+        <div class="form-group">
+          <label>Employee</label>
+          <select id="photoEmployee"></select>
+        </div>
+        <div class="form-group">
+          <label>Photo File</label>
+          <input type="file" id="photoFile" accept="image/*">
+        </div>
+        <div id="gpsStatusPhoto" class="gps-status"></div>
+        <button class="btn btn-primary" id="uploadPhotoBtn">Capture GPS &amp; Upload</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Recent Photos</div>
+        <div id="photoGrid" class="photo-grid"><div class="empty"><div class="empty-icon">📷</div>Loading photos...</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NAV -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-view="dashboard" onclick="showView('dashboard')">
+      <span class="icon">📊</span><span>Dashboard</span>
+    </button>
+    <button class="nav-item" data-view="time" onclick="showView('time')">
+      <span class="icon">⏱️</span><span>Time</span>
+    </button>
+    <button class="nav-item" data-view="projects" onclick="showView('projects')">
+      <span class="icon">🏗️</span><span>Projects</span>
+    </button>
+    <button class="nav-item" data-view="employees" onclick="showView('employees')">
+      <span class="icon">👷</span><span>Crew</span>
+    </button>
+    <button class="nav-item" data-view="costs" onclick="showView('costs')">
+      <span class="icon">💰</span><span>Costs</span>
+    </button>
+    <button class="nav-item" data-view="reports" onclick="showView('reports')">
+      <span class="icon">📄</span><span>Reports</span>
+    </button>
+    <button class="nav-item" data-view="photos" onclick="showView('photos')">
+      <span class="icon">📷</span><span>Photos</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // STATE
+  var token = localStorage.getItem('punchpoint_token');
+  var user = null;
+  var employeesCache = [];
+  var projectsCache = [];
+  var costCodesCache = [];
+  var currentLat = null;
+  var currentLng = null;
+  var photoLat = null;
+  var photoLng = null;
+  var clockedInEmployee = null;
+
+  // ---------- UTILITIES ----------
+  function $(id){ return document.getElementById(id); }
+  function esc(s){
+    if(s === null || s === undefined) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function fmtCurrency(n){
+    if(n === null || n === undefined) return '$0';
+    return '$' + Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
+  }
+  function fmtHours(h){
+    if(h === null || h === undefined) return '0.0h';
+    return (Math.round(Number(h)*10)/10) + 'h';
+  }
+  function fmtDate(d){
+    if(!d) return '—';
+    var dt = new Date(d);
+    if(isNaN(dt.getTime())) return d;
+    return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  }
+  function fmtDateTime(d){
+    if(!d) return '—';
+    var dt = new Date(d);
+    if(isNaN(dt.getTime())) return d;
+    return dt.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  }
+  function showAlert(msg, type){
+    var area = $('alertArea');
+    area.innerHTML = '<div class="alert alert-' + (type||'error') + '">' + esc(msg) + '</div>';
+    setTimeout(function(){ area.innerHTML = ''; }, 4000);
+  }
+  function clearAlert(){ $('alertArea').innerHTML = ''; }
+
+  // ---------- API ----------
+  function apiCall(path, method, body, isForm){
+    var headers = {};
+    var opts = { method: method || 'GET', headers: headers };
+    if(token) headers['Authorization'] = 'Bearer ' + token;
+    if(body !== undefined && body !== null){
+      if(isForm){
+        opts.body = body; // FormData, browser sets content-type
+      } else {
+        headers['Content-Type'] = 'application/json';
+        opts.body = JSON.stringify(body);
+      }
+    }
+    return fetch(path, opts).then(function(res){
+      if(res.status === 401){
+        // Token expired
+        logout();
+        throw new Error('Session expired. Please sign in again.');
+      }
+      if(!res.ok){
+        return res.json().then(function(e){
+          var msg = (e && e.detail) ? (typeof e.detail === 'string' ? e.detail : JSON.stringify(e.detail)) : ('HTTP ' + res.status);
+          throw new Error(msg);
+        }).catch(function(){
+          throw new Error('Request failed (HTTP ' + res.status + ')');
+        });
+      }
+      if(res.status === 204) return null;
+      return res.json();
+    });
+  }
+
+  // ---------- AUTH ----------
+  function setLoggedIn(data){
+    if(data.access_token){
+      token = data.access_token;
+      localStorage.setItem('punchpoint_token', token);
+    }
+    if(data.user){
+      user = data.user;
+    }
+    showApp();
+    initApp();
+  }
+
+  function showApp(){
+    $('loginScreen').style.display = 'none';
+    $('app').classList.add('active');
+    if(user){
+      $('userName').textContent = user.full_name || user.email || '';
+    }
+  }
+
+  function logout(){
+    token = null;
+    user = null;
+    localStorage.removeItem('punchpoint_token');
+    $('app').classList.remove('active');
+    $('loginScreen').style.display = 'flex';
+    $('loginForm').style.display = 'block';
+    $('registerForm').style.display = 'none';
+    $('loginSub').textContent = 'Construction Time Tracking & Job Costing';
+  }
+
+  function doLogin(){
+    clearAlert();
+    var email = $('loginEmail').value.trim();
+    var password = $('loginPassword').value;
+    if(!email || !password){ showAlert('Enter your email and password.'); return; }
+    $('loginBtn').textContent = 'Signing in...';
+    $('loginBtn').disabled = true;
+    apiCall('/api/auth/login','POST',{email:email,password:password})
+      .then(function(data){
+        token = data.access_token;
+        localStorage.setItem('punchpoint_token', token);
+        return apiCall('/api/auth/me','GET');
+      })
+      .then(function(me){
+        user = me;
+        setLoggedIn({access_token: token, user: me});
+      })
+      .catch(function(e){ showAlert(e.message); })
+      .finally(function(){
+        $('loginBtn').textContent = 'Sign In';
+        $('loginBtn').disabled = false;
+      });
+  }
+
+  function doRegister(){
+    clearAlert();
+    var company_name = $('regCompany').value.trim();
+    var full_name = $('regName').value.trim();
+    var email = $('regEmail').value.trim();
+    var password = $('regPassword').value;
+    if(!company_name || !full_name || !email || !password){ showAlert('Please fill in all fields.'); return; }
+    if(password.length < 8){ showAlert('Password must be at least 8 characters.'); return; }
+    $('registerBtn').textContent = 'Creating...';
+    $('registerBtn').disabled = true;
+    apiCall('/api/auth/register','POST',{company_name:company_name,full_name:full_name,email:email,password:password})
+      .then(function(data){
+        setLoggedIn(data);
+      })
+      .catch(function(e){ showAlert(e.message); })
+      .finally(function(){
+        $('registerBtn').textContent = 'Create Account';
+        $('registerBtn').disabled = false;
+      });
+  }
+
+  // ---------- NAVIGATION ----------
+  function showView(viewName){
+    var views = document.querySelectorAll('.view');
+    for(var i=0;i<views.length;i++){ views[i].classList.remove('active'); }
+    var v = $('view-' + viewName);
+    if(v) v.classList.add('active');
+    var items = document.querySelectorAll('.nav-item');
+    for(var j=0;j<items.length;j++){
+      items[j].classList.toggle('active', items[j].getAttribute('data-view') === viewName);
+    }
+    var titles = {dashboard:'Dashboard',time:'Time Tracking',projects:'Projects',employees:'Crew',costs:'Job Costing',reports:'Daily Reports',photos:'Photos'};
+    $('desktopTitle').textContent = titles[viewName] || 'PunchPoint';
+    // Load data for view
+    switch(viewName){
+      case 'dashboard': renderDashboard(); break;
+      case 'time': renderTimeTracking(); break;
+      case 'projects': renderProjects(); break;
+      case 'employees': renderEmployees(); break;
+      case 'costs': renderJobCosting(); break;
+      case 'reports': renderReports(); break;
+      case 'photos': renderPhotos(); break;
+    }
+  }
+  window.showView = showView;
+
+  // ---------- INIT ----------
+  function initApp(){
+    // Load reference data
+    loadEmployees().then(loadProjects).then(loadCostCodes).then(function(){
+      populateDropdowns();
+      renderDashboard();
+    }).catch(function(){});
+  }
+
+  function loadEmployees(){
+    return apiCall('/api/employees','GET').then(function(data){
+      employeesCache = data || [];
+    }).catch(function(){ employeesCache = []; });
+  }
+
+  function loadProjects(){
+    return apiCall('/api/projects','GET').then(function(data){
+      projectsCache = data || [];
+    }).catch(function(){ projectsCache = []; });
+  }
+
+  function loadCostCodes(){
+    return apiCall('/api/cost-codes','GET').then(function(data){
+      costCodesCache = data || [];
+    }).catch(function(){ costCodesCache = []; });
+  }
+
+  function populateDropdowns(){
+    // Employee dropdowns
+    var empOpts = '<option value="">Select employee...</option>';
+    for(var i=0;i<employeesCache.length;i++){
+      var e = employeesCache[i];
+      empOpts += '<option value="' + e.id + '">' + esc(e.employee_id) + ' — ' + esc(e.first_name) + ' ' + esc(e.last_name) + '</option>';
+    }
+    $('timeEmployee').innerHTML = empOpts;
+    $('photoEmployee').innerHTML = empOpts;
+
+    // Project dropdowns
+    var projOpts = '<option value="">Select project...</option>';
+    for(var j=0;j<projectsCache.length;j++){
+      var p = projectsCache[j];
+      projOpts += '<option value="' + p.id + '">' + esc(p.name) + (p.client_name ? ' (' + esc(p.client_name) + ')' : '') + '</option>';
+    }
+    $('timeProject').innerHTML = projOpts;
+    $('reportProject').innerHTML = projOpts;
+    $('photoProject').innerHTML = projOpts;
+
+    // Cost code dropdown
+    var ccOpts = '<option value="">Select cost code...</option>';
+    for(var k=0;k<costCodesCache.length;k++){
+      var c = costCodesCache[k];
+      ccOpts += '<option value="' + c.id + '">' + esc(c.code) + ' — ' + esc(c.description) + '</option>';
+    }
+    $('timeCostCode').innerHTML = ccOpts;
+  }
+
+  // ---------- DASHBOARD ----------
+  function renderDashboard(){
+    apiCall('/api/dashboard','GET').then(function(d){
+      $('statActiveCrew').textContent = d.active_crew !== undefined ? d.active_crew : '0';
+      $('statHours').textContent = fmtHours(d.hours_today);
+      $('statProjects').textContent = d.projects_active !== undefined ? d.projects_active : '0';
+      $('statLabor').textContent = fmtCurrency(d.labor_cost_today);
+    }).catch(function(){
+      $('statActiveCrew').textContent = '0';
+      $('statHours').textContent = '0.0h';
+      $('statProjects').textContent = '0';
+      $('statLabor').textContent = '$0';
+    });
+  }
+
+  // ---------- TIME TRACKING ----------
+  function renderTimeTracking(){
+    // Check clock status when employee selected
+    $('timeEmployee').onchange = function(){
+      checkClockStatus(this.value);
+    };
+    loadRecentEntries();
+  }
+
+  function checkClockStatus(empId){
+    if(!empId){
+      var cs = $('clockStatus');
+      cs.classList.remove('clocked-in');
+      $('clockStatusText').textContent = 'Not Clocked In';
+      $('clockStatusSub').textContent = 'Select an employee to check status';
+      clockedInEmployee = null;
+      return;
+    }
+    // We'll check recent entries for this employee
+    var today = new Date();
+    var dateFrom = new Date(today);
+    dateFrom.setHours(0,0,0,0);
+    apiCall('/api/time/entries?date_from=' + dateFrom.toISOString().slice(0,10),'GET').then(function(entries){
+      var found = null;
+      for(var i=0;i<entries.length;i++){
+        if(String(entries[i].employee_id) === String(empId) && !entries[i].clock_out){
+          found = entries[i];
+          break;
+        }
+      }
+      if(found){
+        $('clockStatus').classList.add('clocked-in');
+        $('clockStatusText').textContent = 'Clocked In';
+        $('clockStatusSub').textContent = 'Since ' + fmtDateTime(found.clock_in);
+        clockedInEmployee = found;
+      } else {
+        $('clockStatus').classList.remove('clocked-in');
+        $('clockStatusText').textContent = 'Not Clocked In';
+        $('clockStatusSub').textContent = 'Ready to clock in';
+        clockedInEmployee = null;
+      }
+    }).catch(function(){
+      clockedInEmployee = null;
+    });
+  }
+
+  function captureGPS(callback){
+    if(!navigator.geolocation){
+      callback(false, 'Geolocation not supported');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        currentLat = pos.coords.latitude;
+        currentLng = pos.coords.longitude;
+        callback(true, 'GPS: ' + currentLat.toFixed(5) + ', ' + currentLng.toFixed(5));
+      },
+      function(err){
+        callback(false, 'GPS error: ' + (err.message || 'unavailable'));
+      },
+      {enableHighAccuracy:true, timeout:10000}
+    );
+  }
+
+  function doClockIn(){
+    var empId = $('timeEmployee').value;
+    var projId = $('timeProject').value;
+    var ccId = $('timeCostCode').value;
+    var notes = $('timeNotes').value.trim();
+    if(!empId || !projId || !ccId){
+      alert('Please select employee, project, and cost code.');
+      return;
+    }
+    var btn = $('clockInBtn');
+    btn.textContent = 'Getting GPS...';
+    btn.disabled = true;
+    captureGPS(function(ok, msg){
+      $('gpsStatusIn').textContent = msg;
+      $('gpsStatusIn').className = 'gps-status ' + (ok ? 'ok' : 'err');
+      var body = {
+        employee_id: parseInt(empId),
+        project_id: parseInt(projId),
+        cost_code_id: parseInt(ccId),
+        notes: notes
+      };
+      if(ok){ body.latitude_in = currentLat; body.longitude_in = currentLng; }
+      btn.textContent = 'Clocking In...';
+      apiCall('/api/time/clock-in','POST',body).then(function(){
+        btn.textContent = 'Clock In';
+        btn.disabled = false;
+        alert('Clocked in successfully.');
+        $('timeNotes').value = '';
+        checkClockStatus(empId);
+        loadRecentEntries();
+      }).catch(function(e){
+        btn.textContent = 'Clock In';
+        btn.disabled = false;
+        alert('Clock in failed: ' + e.message);
+      });
+    });
+  }
+
+  function doClockOut(){
+    var empId = $('timeEmployee').value;
+    var notes = $('timeNotes').value.trim();
+    if(!empId){ alert('Please select an employee.'); return; }
+    var btn = $('clockOutBtn');
+    btn.textContent = 'Getting GPS...';
+    btn.disabled = true;
+    captureGPS(function(ok, msg){
+      $('gpsStatusIn').textContent = msg;
+      $('gpsStatusIn').className = 'gps-status ' + (ok ? 'ok' : 'err');
+      var body = {
+        employee_id: parseInt(empId),
+        notes: notes
+      };
+      if(ok){ body.latitude_out = currentLat; body.longitude_out = currentLng; }
+      btn.textContent = 'Clocking Out...';
+      apiCall('/api/time/clock-out','POST',body).then(function(){
+        btn.textContent = 'Clock Out';
+        btn.disabled = false;
+        alert('Clocked out successfully.');
+        $('timeNotes').value = '';
+        checkClockStatus(empId);
+        loadRecentEntries();
+      }).catch(function(e){
+        btn.textContent = 'Clock Out';
+        btn.disabled = false;
+        alert('Clock out failed: ' + e.message);
+      });
+    });
+  }
+
+  function loadRecentEntries(){
+    var container = $('recentEntries');
+    apiCall('/api/time/entries','GET').then(function(entries){
+      if(!entries || entries.length === 0){
+        container.innerHTML = '<div class="empty"><div class="empty-icon">📋</div>No time entries yet</div>';
+        return;
+      }
+      var html = '';
+      var shown = entries.slice(0,10);
+      for(var i=0;i<shown.length;i++){
+        var e = shown[i];
+        var empName = empLookup(e.employee_id);
+        var projName = projLookup(e.project_id);
+        var ccName = ccLookup(e.cost_code_id);
+        var status = e.clock_out ? fmtHours(calcHours(e.clock_in, e.clock_out)) : '<span class="badge badge-active">Active</span>';
+        var approveBtn = '';
+        if(!e.is_approved && e.clock_out){
+          approveBtn = ' <button class="btn btn-sm btn-navy" onclick="approveEntry(' + e.id + ')">Approve</button>';
+        }
+        html += '<div class="list-item">' +
+          '<div class="list-item-info">' +
+            '<div class="list-item-title">' + esc(empName) + '</div>' +
+            '<div class="list-item-sub">' + esc(projName) + ' &middot; ' + esc(ccName) + '</div>' +
+            '<div class="list-item-sub mono">' + esc(fmtDateTime(e.clock_in)) + ' → ' + esc(e.clock_out ? fmtDateTime(e.clock_out) : '—') + '</div>' +
+            (e.notes ? '<div class="list-item-sub">📝 ' + esc(e.notes) + '</div>' : '') +
+          '</div>' +
+          '<div class="text-right">' +
+            '<div class="list-item-title">' + status + '</div>' +
+            approveBtn +
+          '</div>' +
+        '</div>';
+      }
+      container.innerHTML = html;
+    }).catch(function(){
+      container.innerHTML = '<div class="empty"><div class="empty-icon">📋</div>Unable to load entries</div>';
+    });
+  }
+
+  window.approveEntry = function(id){
+    apiCall('/api/time/approve/' + id,'POST').then(function(){
+      loadRecentEntries();
+    }).catch(function(e){ alert('Approve failed: ' + e.message); });
+  };
+
+  function calcHours(inStr, outStr){
+    var d1 = new Date(inStr);
+    var d2 = new Date(outStr);
+    if(isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
+    return (d2 - d1) / 3600000;
+  }
+
+  function empLookup(id){
+    for(var i=0;i<employeesCache.length;i++){
+      if(String(employeesCache[i].id) === String(id)){
+        return employeesCache[i].first_name + ' ' + employeesCache[i].last_name;
+      }
+    }
+    return 'Unknown';
+  }
+  function projLookup(id){
+    for(var i=0;i<projectsCache.length;i++){
+      if(String(projectsCache[i].id) === String(id)) return projectsCache[i].name;
+    }
+    return 'Unknown';
+  }
+  function ccLookup(id){
+    for(var i=0;i<costCodesCache.length;i++){
+      if(String(costCodesCache[i].id) === String(id)) return costCodesCache[i].code;
+    }
+    return '—';
+  }
+
+  // ---------- PROJECTS ----------
+  function renderProjects(){
+    var container = $('projectList');
+    apiCall('/api/projects','GET').then(function(projects){
+      projectsCache = projects || [];
+      if(projectsCache.length === 0){
+        container.innerHTML = '<div class="empty"><div class="empty-icon">🏗️</div>No projects yet. Add one above.</div>';
+        return;
+      }
+      var html = '';
+      for(var i=0;i<projectsCache.length;i++){
+        var p = projectsCache[i];
+        var badge = '<span class="badge badge-active">Active</span>';
+        if(p.status === 'completed') badge = '<span class="badge badge-completed">Completed</span>';
+        var budgetHrs = p.budget_hours ? fmtHours(p.budget_hours) : '—';
+        var budgetCost = p.budget_labor_cost ? fmtCurrency(p.budget_labor_cost) : '—';
+        html += '<div class="card">' +
+          '<div class="list-item" style="border-bottom:none">' +
+            '<div class="list-item-info">' +
+              '<div class="list-item-title">' + esc(p.name) + '</div>' +
+              '<div class="list-item-sub">' + esc(p.client_name || '') + (p.address ? ' &middot; ' + esc(p.address) : '') + '</div>' +
+              '<div class="list-item-sub">Budget: ' + budgetHrs + ' &middot; ' + budgetCost + '</div>' +
+            '</div>' +
+            '<div>' + badge + '</div>' +
+          '</div>' +
+        '</div>';
+      }
+      container.innerHTML = html;
+    }).catch(function(){
+      container.innerHTML = '<div class="empty"><div class="empty-icon">🏗️</div>Unable to load projects</div>';
+    });
+  }
+
+  function addProject(){
+    var name = $('projName').value.trim();
+    var client = $('projClient').value.trim();
+    var address = $('projAddress').value.trim();
+    if(!name){ alert('Project name is required.'); return; }
+    var body = {
+      name: name,
+      client_name: client,
+      address: address,
+      budget_hours: parseFloat($('projBudgetHours').value) || null,
+      budget_labor_cost: parseFloat($('projBudgetCost').value) || null
+    };
+    var lat = parseFloat($('projLat').value);
+    var lng = parseFloat($('projLng').value);
+    var gf = parseFloat($('projGeofence').value);
+    if(!isNaN(lat)) body.latitude = lat;
+    if(!isNaN(lng)) body.longitude = lng;
+    if(!isNaN(gf)) body.geofence_radius_meters = gf;
+
+    var btn = $('addProjectBtn');
+    btn.textContent = 'Adding...';
+    btn.disabled = true;
+    apiCall('/api/projects','POST',body).then(function(){
+      btn.textContent = 'Add Project';
+      btn.disabled = false;
+      $('projName').value = '';
+      $('projClient').value = '';
+      $('projAddress').value = '';
+      $('projBudgetHours').value = '';
+      $('projBudgetCost').value = '';
+      $('projLat').value = '';
+      $('projLng').value = '';
+      $('projGeofence').value = '';
+      renderProjects();
+      loadProjects().then(populateDropdowns);
+    }).catch(function(e){
+      btn.textContent = 'Add Project';
+      btn.disabled = false;
+      alert('Add project failed: ' + e.message);
+    });
+  }
+
+  // ---------- EMPLOYEES ----------
+  function renderEmployees(){
+    var container = $('employeeList');
+    apiCall('/api/employees','GET').then(function(emps){
+      employeesCache = emps || [];
+      if(employeesCache.length === 0){
+        container.innerHTML = '<div class="empty"><div class="empty-icon">👷</div>No employees yet. Add crew members above.</div>';
+        return;
+      }
+      var html = '';
+      for(var i=0;i<employeesCache.length;i++){
+        var e = employeesCache[i];
+        var badge = e.is_active === false ? '<span class="badge badge-completed">Inactive</span>' : '<span class="badge badge-active">Active</span>';
+        html += '<div class="list-item">' +
+          '<div class="list-item-info">' +
+            '<div class="list-item-title">' + esc(e.employee_id) + ' — ' + esc(e.first_name) + ' ' + esc(e.last_name) + '</div>' +
+            '<div class="list-item-sub">' + esc(e.phone || 'No phone') + ' &middot; Rate: ' + fmtCurrency(e.hourly_rate) + '/hr &middot; OT: ' + fmtCurrency(e.overtime_rate) + '/hr</div>' +
+          '</div>' +
+          '<div>' + badge + '</div>' +
+        '</div>';
+      }
+      container.innerHTML = html;
+    }).catch(function(){
+      container.innerHTML = '<div class="empty"><div class="empty-icon">👷</div>Unable to load crew</div>';
+    });
+  }
+
+  function addEmployee(){
+    var empId = $('empId').value.trim();
+    var first = $('empFirst').value.trim();
+    var last = $('empLast').value.trim();
+    if(!empId || !first || !last){ alert('Employee ID, first name, and last name are required.'); return; }
+    var body = {
+      employee_id: empId,
+      first_name: first,
+      last_name: last,
+      phone: $('empPhone').value.trim(),
+      hourly_rate: parseFloat($('empRate').value) || 0,
+      overtime_rate: parseFloat($('empOtRate').value) || 0
+    };
+    var btn = $('addEmployeeBtn');
+    btn.textContent = 'Adding...';
+    btn.disabled = true;
+    apiCall('/api/employees','POST',body).then(function(){
+      btn.textContent = 'Add Employee';
+      btn.disabled = false;
+      $('empId').value = '';
+      $('empFirst').value = '';
+      $('empLast').value = '';
+      $('empPhone').value = '';
+      $('empRate').value = '';
+      $('empOtRate').value = '';
+      renderEmployees();
+      loadEmployees().then(populateDropdowns);
+    }).catch(function(e){
+      btn.textContent = 'Add Employee';
+      btn.disabled = false;
+      alert('Add employee failed: ' + e.message);
+    });
+  }
+
+  function bulkImport(){
+    var text = $('bulkText').value.trim();
+    if(!text){ alert('Paste CSV data first.'); return; }
+    var lines = text.split('\n');
+    var data = [];
+    for(var i=0;i<lines.length;i++){
+      var line = lines[i].trim();
+      if(!line) continue;
+      var parts = line.split(',').map(function(s){ return s.trim(); });
+      if(parts.length < 3) continue;
+      data.push({
+        employee_id: parts[0],
+        first_name: parts[1],
+        last_name: parts[2],
+        phone: parts[3] || '',
+        hourly_rate: parseFloat(parts[4]) || 0,
+        overtime_rate: parseFloat(parts[5]) || 0
+      });
+    }
+    if(data.length === 0){ alert('No valid rows found.'); return; }
+    var btn = $('bulkImportBtn');
+    btn.textContent = 'Importing ' + data.length + '...';
+    btn.disabled = true;
+    apiCall('/api/employees/bulk-import','POST',data).then(function(){
+      btn.textContent = 'Import Employees';
+      btn.disabled = false;
+      $('bulkText').value = '';
+      alert('Imported ' + data.length + ' employees.');
+      renderEmployees();
+      loadEmployees().then(populateDropdowns);
+    }).catch(function(e){
+      btn.textContent = 'Import Employees';
+      btn.disabled = false;
+      alert('Import failed: ' + e.message);
+    });
+  }
+
+  // ---------- JOB COSTING ----------
+  function renderJobCosting(){
+    var body = $('costBody');
+    apiCall('/api/dashboard/job-costing','GET').then(function(data){
+      var projects = data.projects || [];
+      if(projects.length === 0){
+        body.innerHTML = '<tr><td colspan="8" class="empty">No job cost data available</td></tr>';
+        return;
+      }
+      var html = '';
+      for(var i=0;i<projects.length;i++){
+        var p = projects[i];
+        var vHrsClass = '';
+        if(p.variance_hours > 0) vHrsClass = ' style="color:var(--red)"';
+        var vCostClass = '';
+        if(p.variance_cost > 0) vCostClass = ' style="color:var(--red)"';
+        var pctBadge = '';
+        var pct = p.pct_budget_used || 0;
+        if(pct >= 100) pctBadge = '<span class="badge badge-over">' + pct.toFixed(0) + '%</span>';
+        else if(pct >= 80) pctBadge = '<span class="badge badge-warn">' + pct.toFixed(0) + '%</span>';
+        else pctBadge = '<span class="badge badge-ok">' + pct.toFixed(0) + '%</span>';
+
+        html += '<tr>' +
+          '<td><strong>' + esc(p.project_name) + '</strong></td>' +
+          '<td class="text-right">' + fmtHours(p.budget_hours) + '</td>' +
+          '<td class="text-right">' + fmtHours(p.actual_hours) + '</td>' +
+          '<td class="text-right"' + vHrsClass + '>' + (p.variance_hours >= 0 ? '+' : '') + fmtHours(Math.abs(p.variance_hours || 0)) + '</td>' +
+          '<td class="text-right">' + fmtCurrency(p.budget_labor_cost) + '</td>' +
+          '<td class="text-right">' + fmtCurrency(p.actual_labor_cost) + '</td>' +
+          '<td class="text-right"' + vCostClass + '>' + (p.variance_cost >= 0 ? '+' : '') + fmtCurrency(Math.abs(p.variance_cost || 0)) + '</td>' +
+          '<td class="text-right">' + pctBadge + '</td>' +
+        '</tr>';
+      }
+      body.innerHTML = html;
+    }).catch(function(){
+      body.innerHTML = '<tr><td colspan="8" class="empty">Unable to load job cost data</td></tr>';
+    });
+  }
+
+  // ---------- DAILY REPORTS ----------
+  function renderReports(){
+    var container = $('reportList');
+    apiCall('/api/daily-reports','GET').then(function(reports){
+      if(!reports || reports.length === 0){
+        container.innerHTML = '<div class="empty"><div class="empty-icon">📄</div>No daily reports yet</div>';
+        return;
+      }
+      var html = '';
+      for(var i=0;i<reports.length;i++){
+        var r = reports[i];
+        var projName = projLookup(r.project_id);
+        var injuryBadge = r.injuries_reported === 'none' || !r.injuries_reported ? '<span class="badge badge-ok">No Injuries</span>' : '<span class="badge badge-warn">' + esc(r.injuries_reported) + '</span>';
+        html += '<div class="card">' +
+          '<div class="list-item" style="border-bottom:none">' +
+            '<div class="list-item-info">' +
+              '<div class="list-item-title">' + esc(projName) + '</div>' +
+              '<div class="list-item-sub">' + esc(fmtDate(r.date)) + ' &middot; ' + esc(r.weather || '') + '</div>' +
+              '<div class="list-item-sub">Crew: ' + esc(r.crew_summary || '—') + '</div>' +
+              '<div class="list-item-sub">Hours: ' + fmtHours(r.hours_total) + '</div>' +
+              (r.notes ? '<div class="list-item-sub">📝 ' + esc(r.notes) + '</div>' : '') +
+            '</div>' +
+            '<div>' + injuryBadge + '</div>' +
+          '</div>' +
+        '</div>';
+      }
+      container.innerHTML = html;
+    }).catch(function(){
+      container.innerHTML = '<div class="empty"><div class="empty-icon">📄</div>Unable to load reports</div>';
+    });
+  }
+
+  function addReport(){
+    var projId = $('reportProject').value;
+    var date = $('reportDate').value;
+    if(!projId || !date){ alert('Project and date are required.'); return; }
+    var body = {
+      project_id: parseInt(projId),
+      date: date,
+      weather: $('reportWeather').value.trim(),
+      crew_summary: $('reportCrew').value.trim(),
+      hours_total: parseFloat($('reportHours').value) || 0,
+      injuries_reported: $('reportInjuries').value,
+      notes: $('reportNotes').value.trim()
+    };
+    var btn = $('addReportBtn');
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+    apiCall('/api/daily-reports','POST',body).then(function(){
+      btn.textContent = 'Submit Report';
+      btn.disabled = false;
+      $('reportDate').value = '';
+      $('reportWeather').value = '';
+      $('reportCrew').value = '';
+      $('reportHours').value = '';
+      $('reportNotes').value = '';
+      renderReports();
+      alert('Daily report submitted.');
+    }).catch(function(e){
+      btn.textContent = 'Submit Report';
+      btn.disabled = false;
+      alert('Submit failed: ' + e.message);
+    });
+  }
+
+  // ---------- PHOTOS ----------
+  function renderPhotos(){
+    var container = $('photoGrid');
+    var projId = $('photoProject').value;
+    var url = '/api/photos';
+    if(projId) url += '?project_id=' + projId;
+    apiCall(url,'GET').then(function(photos){
+      if(!photos || photos.length === 0){
+        container.innerHTML = '<div class="empty"><div class="empty-icon">📷</div>No photos yet</div>';
+        return;
+      }
+      var html = '';
+      for(var i=0;i<photos.length;i++){
+        var ph = photos[i];
+        var projName = projLookup(ph.project_id);
+        html += '<div class="photo-item" onclick="window.open(\'/api/photos/' + ph.id + '/file\', \'_blank\')" title="' + esc(projName) + ' - ' + esc(fmtDateTime(ph.uploaded_at)) + '">' +
+          '<img src="/api/photos/' + ph.id + '/file" alt="' + esc(projName) + '" onerror="this.style.display=\'none\'">' +
+        '</div>';
+      }
+      container.innerHTML = html;
+    }).catch(function(){
+      container.innerHTML = '<div class="empty"><div class="empty-icon">📷</div>Unable to load photos</div>';
+    });
+  }
+
+  function uploadPhoto(){
+    var projId = $('photoProject').value;
+    var empId = $('photoEmployee').value;
+    var fileInput = $('photoFile');
+    var file = fileInput.files[0];
+    if(!projId || !empId){ alert('Select project and employee.'); return; }
+    if(!file){ alert('Choose a photo file.'); return; }
+    var btn = $('uploadPhotoBtn');
+    btn.textContent = 'Capturing GPS...';
+    btn.disabled = true;
+
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        photoLat = pos.coords.latitude;
+        photoLng = pos.coords.longitude;
+        $('gpsStatusPhoto').textContent = 'GPS: ' + photoLat.toFixed(5) + ', ' + photoLng.toFixed(5);
+        $('gpsStatusPhoto').className = 'gps-status ok';
+        doUpload(file, projId, empId, photoLat, photoLng, btn);
+      },
+      function(err){
+        $('gpsStatusPhoto').textContent = 'GPS unavailable: ' + (err.message || '');
+        $('gpsStatusPhoto').className = 'gps-status err';
+        doUpload(file, projId, empId, null, null, btn);
+      },
+      {enableHighAccuracy:true, timeout:10000}
+    );
+  }
+
+  function doUpload(file, projId, empId, lat, lng, btn){
+    btn.textContent = 'Uploading...';
+    var fd = new FormData();
+    fd.append('file', file);
+    fd.append('project_id', projId);
+    fd.append('employee_id', empId);
+    fd.append('timestamp', new Date().toISOString());
+    if(lat !== null) fd.append('gps_lat', lat);
+    if(lng !== null) fd.append('gps_lng', lng);
+    apiCall('/api/photos/upload','POST',fd,true).then(function(){
+      btn.textContent = 'Capture GPS & Upload';
+      btn.disabled = false;
+      $('photoFile').value = '';
+      alert('Photo uploaded.');
+      renderPhotos();
+    }).catch(function(e){
+      btn.textContent = 'Capture GPS & Upload';
+      btn.disabled = false;
+      alert('Upload failed: ' + e.message);
+    });
+  }
+
+  // ---------- EVENT BINDINGS ----------
+  $('loginBtn').addEventListener('click', doLogin);
+  $('registerBtn').addEventListener('click', doRegister);
+  $('showRegister').addEventListener('click', function(){
+    $('loginForm').style.display = 'none';
+    $('registerForm').style.display = 'block';
+    clearAlert();
+  });
+  $('showLogin').addEventListener('click', function(){
+    $('loginForm').style.display = 'block';
+    $('registerForm').style.display = 'none';
+    clearAlert();
+  });
+
+  $('logoutBtnMobile').addEventListener('click', logout);
+  $('logoutBtnDesktop').addEventListener('click', logout);
+
+  $('clockInBtn').addEventListener('click', doClockIn);
+  $('clockOutBtn').addEventListener('click', doClockOut);
+  $('addProjectBtn').addEventListener('click', addProject);
+  $('addEmployeeBtn').addEventListener('click', addEmployee);
+  $('bulkImportBtn').addEventListener('click', bulkImport);
+  $('addReportBtn').addEventListener('click', addReport);
+  $('uploadPhotoBtn').addEventListener('click', uploadPhoto);
+
+  $('photoProject').addEventListener('change', renderPhotos);
+
+  // Enter key on login
+  $('loginPassword').addEventListener('keypress', function(e){ if(e.key==='Enter') doLogin(); });
+  $('regPassword').addEventListener('keypress', function(e){ if(e.key==='Enter') doRegister(); });
+
+  // ---------- AUTO-LOGIN ----------
+  if(token){
+    apiCall('/api/auth/me','GET').then(function(me){
+      user = me;
+      showApp();
+      initApp();
+    }).catch(function(){
+      localStorage.removeItem('punchpoint_token');
+      token = null;
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
