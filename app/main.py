@@ -48,7 +48,14 @@ if os.path.isdir(static_dir):
 
 
 @app.get('/')
-def serve_index():
+def serve_landing():
+    landing_path = os.path.join(os.path.dirname(__file__), 'static', 'landing.html')
+    if os.path.isfile(landing_path):
+        return FileResponse(landing_path)
+    return HTMLResponse('<h1>PunchPoint</h1><p>Landing page not found.</p>', status_code=200)
+
+@app.get('/app')
+def serve_app():
     index_path = os.path.join(os.path.dirname(__file__), 'static', 'index.html')
     if os.path.isfile(index_path):
         return FileResponse(index_path)

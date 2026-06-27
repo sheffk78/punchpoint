@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0A2540">
+<link rel="icon" href="/static/favicon.ico" sizes="any">
+<link rel="icon" href="/static/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta property="og:title" content="PunchPoint — Construction Time Tracking & Job Costing">
+<meta property="og:description" content="GPS time tracking and job costing platform that uses AI to turn time data into profit insights.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/static/logo-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PunchPoint — Construction Time Tracking & Job Costing">
+<meta name="twitter:description" content="GPS time tracking and job costing platform that uses AI to turn time data into profit insights.">
+<meta name="twitter:image" content="/static/logo-512.png">
+<meta name="description" content="PunchPoint is a GPS time tracking and job costing platform for construction contractors. Track crew time, verify location, and turn time data into profit insights.">
+<title>PunchPoint — Construction Time Tracking & Job Costing</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0A2540;
+  --navy-light:#143658;
+  --navy-dark:#061A30;
+  --orange:#FF6B35;
+  --orange-dark:#E55A2B;
+  --white:#FFFFFF;
+  --slate:#64748B;
+  --slate-light:#94A3B8;
+  --bg:#F1F5F9;
+  --card:#FFFFFF;
+  --border:#E2E8F0;
+  --green:#16A34A;
+  --radius:8px;
+  --radius-lg:16px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 30px rgba(0,0,0,.12);
+  --shadow-xl:0 20px 60px rgba(10,37,64,.15);
+  --max:1140px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--white);color:var(--navy);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,37,64,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo img{height:32px;width:auto}
+.nav-logo .name{font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.5px}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--slate-light);font-size:15px;font-weight:500;transition:color .15s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--orange);color:#fff;padding:9px 20px;border-radius:var(--radius);font-weight:600;font-size:15px;transition:background .15s}
+.nav-cta:hover{background:var(--orange-dark)}
+@media(max-width:768px){
+  .nav-links a:not(.nav-cta){display:none}
+}
+
+/* HERO */
+.hero{background:var(--navy);color:#fff;padding:120px 24px 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(255,107,53,.08) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1}
+.hero-tag{display:inline-block;background:rgba(255,107,53,.15);color:var(--orange);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:20px;letter-spacing:.3px}
+.hero h1{font-size:clamp(32px,5vw,54px);font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:20px;max-width:700px}
+.hero h1 .accent{color:var(--orange)}
+.hero p.lead{font-size:clamp(17px,2.5vw,21px);color:var(--slate-light);max-width:560px;margin-bottom:32px;line-height:1.5}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:14px 28px;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:var(--font);cursor:pointer;transition:opacity .15s,background .15s,transform .1s;text-decoration:none}
+.btn:active{transform:scale(.97)}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover{background:var(--orange-dark)}
+.btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.25)}
+.btn-outline:hover{border-color:#fff}
+.btn-navy-sm{background:var(--navy);color:#fff;padding:10px 22px;min-height:44px;font-size:15px}
+.btn-navy-sm:hover{background:var(--navy-light)}
+
+/* HERO STATS */
+.hero-stats{display:flex;gap:48px;margin-top:56px;flex-wrap:wrap}
+.hero-stat .num{font-size:36px;font-weight:800;color:var(--orange);line-height:1}
+.hero-stat .label{font-size:14px;color:var(--slate-light);margin-top:4px}
+
+/* SECTIONS */
+.section{padding:80px 24px}
+.section-inner{max-width:var(--max);margin:0 auto}
+.section-label{text-align:center;color:var(--orange);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.section-title{text-align:center;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-0.5px;margin-bottom:16px;color:var(--navy)}
+.section-sub{text-align:center;color:var(--slate);font-size:18px;max-width:620px;margin:0 auto 48px}
+
+/* PROBLEM */
+.problem{background:var(--bg)}
+.problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.problem-card{background:#fff;border-radius:var(--radius-lg);padding:28px 24px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.problem-card .icon{font-size:32px;margin-bottom:14px}
+.problem-card h3{font-size:18px;font-weight:700;margin-bottom:8px;color:var(--navy)}
+.problem-card p{font-size:15px;color:var(--slate);line-height:1.5}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px}
+.feature-card{background:#fff;border-radius:var(--radius-lg);padding:32px 28px;box-shadow:var(--shadow);border:1px solid var(--border);transition:box-shadow .2s,transform .2s}
+.feature-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.feature-card .icon-wrap{width:48px;height:48px;border-radius:12px;background:rgba(10,37,64,.06);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px}
+.feature-card h3{font-size:19px;font-weight:700;margin-bottom:10px;color:var(--navy)}
+.feature-card p{font-size:15px;color:var(--slate);line-height:1.55}
+
+/* HOW IT WORKS */
+.how{background:var(--navy);color:#fff}
+.how .section-title{color:#fff}
+.how .section-sub{color:var(--slate-light)}
+.how-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:32px;counter-reset:step}
+.how-step{position:relative;padding-left:0}
+.how-step .num{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--orange);color:#fff;font-size:18px;font-weight:800;margin-bottom:16px}
+.how-step h3{font-size:18px;font-weight:700;margin-bottom:8px;color:#fff}
+.how-step p{font-size:15px;color:var(--slate-light);line-height:1.5}
+
+/* PRICING */
+.pricing{background:var(--bg)}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:960px;margin:0 auto}
+.price-card{background:#fff;border-radius:var(--radius-lg);padding:32px 28px;box-shadow:var(--shadow);border:2px solid var(--border);position:relative;display:flex;flex-direction:column}
+.price-card.featured{border-color:var(--orange);box-shadow:var(--shadow-xl)}
+.price-card.featured::before{content:'Most Popular';position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;letter-spacing:.5px}
+.price-card .plan-name{font-size:16px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.price-card .plan-price{font-size:42px;font-weight:800;color:var(--navy);line-height:1}
+.price-card .plan-price .unit{font-size:15px;font-weight:500;color:var(--slate)}
+.price-card .plan-desc{font-size:14px;color:var(--slate);margin:10px 0 20px;min-height:40px}
+.price-card .plan-features{list-style:none;flex:1}
+.price-card .plan-features li{padding:8px 0;font-size:15px;color:var(--navy);display:flex;align-items:start;gap:10px}
+.price-card .plan-features li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+.price-card .plan-features li.muted{color:var(--slate-light)}
+.price-card .plan-features li.muted::before{color:var(--slate-light);content:'—'}
+.price-card .btn{margin-top:24px;width:100%}
+
+/* CTA */
+.cta-section{padding:80px 24px;background:var(--navy);text-align:center}
+.cta-section h2{color:#fff;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-0.5px;margin-bottom:16px}
+.cta-section p{color:var(--slate-light);font-size:18px;max-width:540px;margin:0 auto 32px}
+.cta-section .btn{min-height:56px;padding:16px 36px;font-size:17px}
+
+/* FOOTER */
+.footer{background:var(--navy-dark);color:var(--slate-light);padding:48px 24px 32px;border-top:1px solid rgba(255,255,255,.05)}
+.footer-inner{max-width:var(--max);margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:32px}
+.footer-brand{display:flex;align-items:center;gap:10px}
+.footer-brand img{height:28px;width:auto}
+.footer-brand .name{font-size:17px;font-weight:700;color:#fff}
+.footer-brand .tag{font-size:13px;color:var(--slate);margin-top:4px}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-links a{color:var(--slate-light);font-size:14px;transition:color .15s}
+.footer-links a:hover{color:#fff}
+.footer-bottom{max-width:var(--max);margin:32px auto 0;padding-top:24px;border-top:1px solid rgba(255,255,255,.06);text-align:center;font-size:13px;color:var(--slate)}
+
+/* MOBILE */
+@media(max-width:640px){
+  .hero{padding:100px 20px 60px}
+  .hero-stats{gap:32px}
+  .hero-stat .num{font-size:28px}
+  .section{padding:60px 20px}
+  .pricing-grid{gap:16px}
+  .price-card{padding:24px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="/static/logo-white.svg" alt="PunchPoint">
+      <span class="name">PunchPoint</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/app" class="nav-cta">Sign In</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Built for construction crews</div>
+    <h1>Know where your <span class="accent">time</span> goes.<br>Know where your <span class="accent">money</span> goes.</h1>
+    <p class="lead">GPS time tracking and job costing that turns crew hours into profit insights. No admin fees. No buddy punching. No guessing which jobs make money.</p>
+    <div class="hero-actions">
+      <a href="/app" class="btn btn-orange">Start Free →</a>
+      <a href="#how" class="btn btn-outline">See How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">$0</div><div class="label">Admin license fee (busybusy charges $40)</div></div>
+      <div class="hero-stat"><div class="num">3</div><div class="label">Users free forever</div></div>
+      <div class="hero-stat"><div class="num">14</div><div class="label">Day free trial, no card needed</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section problem">
+  <div class="section-inner">
+    <div class="section-label">The Problem</div>
+    <h2 class="section-title">Time tracking shouldn't be this hard</h2>
+    <p class="section-sub">Construction crews deserve a tool that works as hard as they do. Here's what's broken with the current options.</p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="icon">💸</div>
+        <h3>Hidden admin fees</h3>
+        <p>busybusy charges $40/mo extra just for an admin license. On top of per-user pricing. That adds up fast.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">📍</div>
+        <h3>Buddy punching</h3>
+        <p>Crews clock in for each other from the parking lot. You're paying for hours nobody worked.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">📊</div>
+        <h3>Tracking without insight</h3>
+        <p>You know hours were worked. You don't know which jobs are profitable and which are bleeding money.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">📱</div>
+        <h3>Clunky field apps</h3>
+        <p>Tiny buttons, confusing menus, sync failures. Crews fight the tool instead of using it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Everything you need. Nothing you don't.</h2>
+    <p class="section-sub">Built by people who understand job sites. Big buttons, high contrast, works in sunlight, works with gloves.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon-wrap">📍</div>
+        <h3>GPS Geofencing</h3>
+        <p>Crew can only clock in when they're on site. Haversine distance calculation verifies location in real time. No more off-site clocking.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">⏰</div>
+        <h3>One-Tap Clock In</h3>
+        <p>Select employee, project, and cost code. Clock in takes 5 seconds. GPS captures automatically. Crew gets back to work.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">💰</div>
+        <h3>Job Costing</h3>
+        <p>Budget vs. actuals across every project. See variance and percent used at a glance. Know which jobs are making or losing money before it's too late.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">👷</div>
+        <h3>Crew Management</h3>
+        <p>Add employees individually or bulk import via CSV. Track hourly rates, overtime rates, and active status. Auto-generated employee IDs.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">📸</div>
+        <h3>Photo Documentation</h3>
+        <p>Photos with GPS and timestamp metadata. Document progress, verify work completed, protect against disputes. Liability protection in your pocket.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">📋</div>
+        <h3>Daily Reports</h3>
+        <p>OSHA-compliant daily work logs. Auto-capture weather, crew size, hours, and injuries. Stop handwriting reports at the end of a 12-hour day.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">🔐</div>
+        <h3>Privacy-First GPS</h3>
+        <p>Location is captured only at clock in and clock out. No continuous tracking. Employees see exactly what's recorded. Trust goes both ways.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">🏗️</div>
+        <h3>Project Geofencing</h3>
+        <p>Set lat/lng and radius for each project. Crew can only clock into projects they're physically at. Budget hours and labor costs per project.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">📊</div>
+        <h3>Real-Time Dashboard</h3>
+        <p>Active crew count, hours today, active projects, labor cost. Everything you need to run the day, in one view. No digging through menus.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section how" id="how">
+  <div class="section-inner">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">Running in 5 minutes</h2>
+    <p class="section-sub">No IT department required. No installation. No training day. Just working.</p>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="num">1</div>
+        <h3>Create your company</h3>
+        <p>Sign up with your company name, email, and password. You're the admin. No setup fee, no sales call.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">2</div>
+        <h3>Add your crew</h3>
+        <p>Add employees one by one or paste a CSV. Set hourly and overtime rates. Auto-generated IDs keep it organized.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">3</div>
+        <h3>Set up projects</h3>
+        <p>Create projects with addresses, budgets, and geofence radius. Add cost codes for different work types.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">4</div>
+        <h3>Crew clocks in</h3>
+        <p>Crew selects their name, project, and cost code. GPS verifies they're on site. One tap. Five seconds.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">5</div>
+        <h3>Watch the numbers</h3>
+        <p>Dashboard shows hours, labor costs, and project health in real time. Job costing shows where you're winning and losing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section pricing" id="pricing">
+  <div class="section-inner">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, honest pricing</h2>
+    <p class="section-sub">No admin license fee. No hidden costs. No sales call required. Cancel anytime.</p>
+    <div class="pricing-grid">
+      <!-- FREE -->
+      <div class="price-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">$0<span class="unit">/user/mo</span></div>
+        <div class="plan-desc">For small crews getting started. Everything you need to track time and costs.</div>
+        <ul class="plan-features">
+          <li>GPS time tracking</li>
+          <li>Job costing</li>
+          <li>Equipment tracking</li>
+          <li>Up to 3 users</li>
+          <li class="muted">Scheduling</li>
+          <li class="muted">AI insights</li>
+        </ul>
+        <a href="/app" class="btn btn-navy-sm">Start Free</a>
+      </div>
+      <!-- PRO -->
+      <div class="price-card featured">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$8.99<span class="unit">/user/mo</span></div>
+        <div class="plan-desc">For growing crews that need scheduling, photos, and daily reports. No admin fee.</div>
+        <ul class="plan-features">
+          <li>Everything in Free</li>
+          <li>Scheduling</li>
+          <li>Photo documentation</li>
+          <li>Daily project reports</li>
+          <li>PTO & absence management</li>
+          <li>Expense tracking</li>
+          <li>Unlimited users</li>
+        </ul>
+        <a href="/app" class="btn btn-orange">Start 14-Day Trial</a>
+      </div>
+      <!-- PREMIUM -->
+      <div class="price-card">
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">$14.99<span class="unit">/user/mo</span></div>
+        <div class="plan-desc">For contractors who want AI insights, certified payroll, and an open API.</div>
+        <ul class="plan-features">
+          <li>Everything in Pro</li>
+          <li>AI profitability insights</li>
+          <li>Certified payroll support</li>
+          <li>Client invoicing</li>
+          <li>Custom dashboards</li>
+          <li>REST API access</li>
+        </ul>
+        <a href="/app" class="btn btn-navy-sm">Start 14-Day Trial</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Stop guessing. Start knowing.</h2>
+  <p>Free for up to 3 users. No credit card. No sales call. Your crew is clocked in within 5 minutes.</p>
+  <a href="/app" class="btn btn-orange">Get Started Free →</a>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="/static/logo-white.svg" alt="PunchPoint">
+      <div>
+        <div class="name">PunchPoint</div>
+        <div class="tag">Construction time tracking & job costing</div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/app">Sign In</a>
+      <a href="/app">Create Account</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 PunchPoint. Built for crews who get the job done.
+  </div>
+</footer>
+
+</body>
+</html>
