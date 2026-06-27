@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0A2540">
+<link rel="icon" href="/static/favicon.ico" sizes="any">
+<link rel="icon" href="/static/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta property="og:title" content="PunchPoint — Construction Time Tracking & Job Costing">
+<meta property="og:description" content="GPS time tracking and job costing platform that uses AI to turn time data into profit insights.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/static/logo-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PunchPoint — Construction Time Tracking & Job Costing">
+<meta name="twitter:description" content="GPS time tracking and job costing platform that uses AI to turn time data into profit insights.">
+<meta name="twitter:image" content="/static/logo-512.png">
 <title>PunchPoint — Construction Time Tracking</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -35,7 +46,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .login-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--navy);padding:24px}
 .login-card{background:var(--white);border-radius:8px;padding:32px 24px;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
 .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;justify-content:center}
-.login-logo .dot{width:36px;height:36px;background:var(--orange);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px}
+.login-logo .logo-mark{width:40px;height:40px}
 .login-logo .name{font-size:22px;font-weight:700;color:var(--navy)}
 .login-sub{text-align:center;color:var(--slate);font-size:13px;margin-bottom:20px}
 
@@ -74,7 +85,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 /* HEADER */
 .header{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
 .header .logo{display:flex;align-items:center;gap:8px}
-.header .logo .dot{width:28px;height:28px;background:var(--orange);border-radius:5px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px}
+.header .logo .logo-mark-sm{width:28px;height:28px}
 .header .logo .name{font-size:17px;font-weight:700}
 .header .user-info{font-size:13px;color:var(--slate-light);display:flex;align-items:center;gap:10px}
 
@@ -94,7 +105,11 @@ body{display:flex;flex-direction:column;min-height:100vh}
   .content{margin-left:200px;padding:24px;margin-bottom:0}
   .desktop-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
   .desktop-header h1{font-size:24px;font-weight:700;color:var(--navy)}
+  .sidebar-logo{display:flex;align-items:center;gap:8px;padding:0 18px 12px;margin-bottom:4px;border-bottom:1px solid var(--navy-light)}
+  .sidebar-logo .logo-mark-sidebar{width:28px;height:28px}
+  .sidebar-logo .name{font-size:17px;font-weight:700;color:#fff}
 }
+.sidebar-logo{display:none}
 .desktop-header{display:none}
 
 /* PAGE TITLE */
@@ -187,7 +202,7 @@ table tr:last-child td{border-bottom:none}
 <div id="loginScreen" class="login-wrap">
   <div class="login-card">
     <div class="login-logo">
-      <div class="dot">P</div>
+      <img src="/static/logo.svg" alt="PunchPoint" class="logo-mark">
       <div class="name">PunchPoint</div>
     </div>
     <div class="login-sub" id="loginSub">Construction Time Tracking &amp; Job Costing</div>
@@ -237,7 +252,7 @@ table tr:last-child td{border-bottom:none}
   <!-- Mobile header -->
   <div class="header">
     <div class="logo">
-      <div class="dot">P</div>
+      <img src="/static/logo.svg" alt="PunchPoint" class="logo-mark-sm">
       <div class="name">PunchPoint</div>
     </div>
     <div class="user-info">
@@ -524,6 +539,10 @@ table tr:last-child td{border-bottom:none}
 
   <!-- NAV -->
   <nav class="bottom-nav" id="bottomNav">
+    <div class="sidebar-logo">
+      <img src="/static/logo-white.svg" alt="PunchPoint" class="logo-mark-sidebar">
+      <span class="name">PunchPoint</span>
+    </div>
     <button class="nav-item active" data-view="dashboard" onclick="showView('dashboard')">
       <span class="icon">📊</span><span>Dashboard</span>
     </button>
